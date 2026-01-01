@@ -1,0 +1,20 @@
+/* Custom Styles for the Professional Login Page */
+.font-display {
+  font-family: 'Lexend', sans-serif;
+}
+
+.font-body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.login-hero-gradient {
+  background: linear-gradient(to top, #0f172a 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%);
+}
+
+.bg-primary {
+  background-color: #137fec;
+}
+
+.text-primary {
+  color: #137fec;
+}

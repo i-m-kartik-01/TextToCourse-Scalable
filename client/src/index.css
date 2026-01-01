@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonts */
+.font-display {
+  font-family: 'Lexend', sans-serif;
+}
+
+.font-body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+/* Custom helpers */
+.bg-primary {
+  background-color: #137fec;
+}
+
+.text-primary {
+  color: #137fec;
+}
