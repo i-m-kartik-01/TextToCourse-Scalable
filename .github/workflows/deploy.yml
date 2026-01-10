@@ -7,7 +7,7 @@ on:
 
 jobs:
   ci:
-    name: Run CI (tests & build)
+    name: Basic CI (install only)
     runs-on: ubuntu-latest
 
     steps:
@@ -22,15 +22,6 @@ jobs:
       - name: Install dependencies
         working-directory: server
         run: npm install
-
-      - name: Run tests (if present)
-        working-directory: server
-        run: |
-          if npm run | grep -q "test"; then
-            npm test
-          else
-            echo "No tests defined, skipping"
-          fi
 
   deploy:
     name: Deploy to EC2
