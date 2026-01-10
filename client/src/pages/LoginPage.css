@@ -18,3 +18,10 @@
 .text-primary {
   color: #137fec;
 }
+.link-btn {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
