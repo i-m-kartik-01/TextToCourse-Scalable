@@ -28,7 +28,7 @@ jobs:
         working-directory: client
         run: npm run build
 
-      # ---------- CD ----------
+      # ---------- CD ---------
       - name: Deploy to Vercel
         if: github.ref == 'refs/heads/main'
         working-directory: client
