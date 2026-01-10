@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -34,7 +34,7 @@ export default function LessonPage() {
   }, [darkMode]);
 
   /* ---------------- FETCH LESSON ---------------- */
-  const fetchLesson = async () => {
+  const fetchLesson = useCallback(async () => {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_BASE_URL}/api/lessons/${lessonId}`
@@ -59,7 +59,7 @@ export default function LessonPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [lessonId]);
 
   /* ---------------- INITIAL LOAD ---------------- */
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function LessonPage() {
         clearInterval(pollTimerRef.current);
       }
     };
-  }, [lessonId]);
+  }, [fetchLesson]);
 
   /* ---------------- GENERATE IF EMPTY ---------------- */
   useEffect(() => {
@@ -109,7 +109,7 @@ export default function LessonPage() {
     };
 
     generateLesson();
-  }, [lesson, lessonId, isAuthenticated, getAccessTokenSilently]);
+  }, [lesson, isAuthenticated, getAccessTokenSilently, fetchLesson, lessonId]);
 
   /* ---------------- STATES ---------------- */
   if (loading) return <p className="p-10">Loading lesson...</p>;

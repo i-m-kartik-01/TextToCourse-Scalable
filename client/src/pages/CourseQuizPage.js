@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -8,9 +8,7 @@ export default function CourseQuizPage() {
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [quiz, setQuiz] = useState(null);
-  const [status, setStatus] = useState("LOADING"); 
-  // LOADING | NOT_CREATED | GENERATING | READY
-
+  const [status, setStatus] = useState("LOADING");
   const [answers, setAnswers] = useState([]);
   const [result, setResult] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -19,7 +17,7 @@ export default function CourseQuizPage() {
   const pollTimerRef = useRef(null);
 
   /* ---------------- FETCH QUIZ ---------------- */
-  const fetchQuiz = async () => {
+  const fetchQuiz = useCallback(async () => {
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_BASE_URL}/api/courses/${courseId}/quiz`
@@ -52,7 +50,7 @@ export default function CourseQuizPage() {
     } catch {
       setError("Unable to reach server");
     }
-  };
+  }, [courseId]);
 
   /* ---------------- INITIAL LOAD ---------------- */
   useEffect(() => {
@@ -63,7 +61,7 @@ export default function CourseQuizPage() {
         clearInterval(pollTimerRef.current);
       }
     };
-  }, [courseId]);
+  }, [fetchQuiz]);
 
   /* ---------------- GENERATE QUIZ ---------------- */
   const generateQuiz = async () => {
@@ -178,7 +176,6 @@ export default function CourseQuizPage() {
     );
   }
 
-  /* ---------------- READY ---------------- */
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       {quiz.questions.map((q, idx) => (
