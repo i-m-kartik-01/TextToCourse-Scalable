@@ -1,0 +1,74 @@
+name: CI + Deploy Backend to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Run CI (tests & build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: server
+        run: npm install
+
+      - name: Run tests (if present)
+        working-directory: server
+        run: |
+          if npm run | grep -q "test"; then
+            npm test
+          else
+            echo "No tests defined, skipping"
+          fi
+
+  deploy:
+    name: Deploy to EC2
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
+
+            cd ${{ secrets.EC2_APP_DIR }}
+
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Installing production dependencies..."
+            npm install --production
+
+            echo "Restarting API..."
+            pm2 restart texttocourse-api
+
+            echo "Restarting workers..."
+            pm2 restart course-worker || true
+            pm2 restart lesson-worker || true
+            pm2 restart quiz-worker || true
+
+            pm2 save
+            echo "Deployment completed successfully"
+          EOF
