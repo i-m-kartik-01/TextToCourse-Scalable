@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -6,10 +6,7 @@ export default function CoursePage() {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
-  const {
-    isAuthenticated,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +32,7 @@ export default function CoursePage() {
   const pollTimerRef = useRef(null);
 
   /* ---------------- FETCH COURSE ---------------- */
-  const fetchCourse = async () => {
+  const fetchCourse = useCallback(async () => {
     try {
       const headers = {};
 
@@ -60,10 +57,6 @@ export default function CoursePage() {
       const data = await res.json();
       setCourse(data);
 
-      /*
-        FIX: stop polling once modules + lessons exist
-        This prevents reload requirement
-      */
       const hasModules =
         Array.isArray(data.modules) && data.modules.length > 0;
 
@@ -83,16 +76,12 @@ export default function CoursePage() {
       setError(err.message);
       setLoading(false);
     }
-  };
+  }, [courseId, isAuthenticated, getAccessTokenSilently]);
 
   /* ---------------- INITIAL LOAD ---------------- */
   useEffect(() => {
     fetchCourse();
 
-    /*
-      FIX: poll every 2s until backend finishes
-      Same pattern as LessonPage
-    */
     pollTimerRef.current = setInterval(fetchCourse, 2000);
 
     return () => {
@@ -100,7 +89,7 @@ export default function CoursePage() {
         clearInterval(pollTimerRef.current);
       }
     };
-  }, [courseId, isAuthenticated, getAccessTokenSilently]);
+  }, [fetchCourse]);
 
   const handleLessonClick = (lessonId) => {
     navigate(`/lessons/${lessonId}`);
@@ -140,7 +129,6 @@ export default function CoursePage() {
   /* ---------------- UI ---------------- */
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
-      {/* TOP BAR */}
       <header className="h-16 bg-white dark:bg-slate-900 border-b flex items-center justify-between px-6">
         <div className="font-semibold text-lg">CourseGen AI</div>
 
@@ -153,7 +141,6 @@ export default function CoursePage() {
       </header>
 
       <div className="flex">
-        {/* SIDEBAR */}
         <aside className="w-72 bg-white dark:bg-slate-900 border-r min-h-[calc(100vh-64px)] p-4">
           <Link to="/dashboard" className="text-sm block mb-6">
             ← Back to Dashboard
@@ -192,7 +179,6 @@ export default function CoursePage() {
           ))}
         </aside>
 
-        {/* MAIN */}
         <main className="flex-1 p-8">
           <h1 className="text-4xl font-bold mb-4">
             {course.title}
