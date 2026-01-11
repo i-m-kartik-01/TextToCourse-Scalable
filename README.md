@@ -179,6 +179,7 @@ The backend is exposed over HTTPS, with SSL certificates issued by Let’s Encry
     3. Circuit breakers
     4. Observability using Prometheus and Grafana
     5. Worker autoscaling
+    6. can incorporate a low priority queue for lesson generationa and quiz generation, immediately after course generation, not possible now, because per day requests for gemini api calls are limited and stops working after exceeding that limit.
 
 ### Why AWS EC2 instead of Render for backend?
 Because Render costs much more for background workers, and EC2 gives a full machine so, doesn't matter how many workers we incorporate!
