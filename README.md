@@ -13,7 +13,7 @@ UI is designed in a very simple way that you can easily figure out everything yo
 
 # Text To Course - AI Course Generation Platform
 
-TextToCourse is a distributed backend system that converts user prompts into fully structured courses using asynchronous job processing, worker pools, and fault-tolerant message queues. 
+TextToCourse is a full stack web app with backend system that converts user prompts into fully structured courses using asynchronous job processing, worker pools, and fault-tolerant message queues. 
 
 The platform is designed to be scalable, resilient, and production-ready. Instead of handling expensive AI generation inside HTTP requests, it offloads work to background workers through RabbitMQ, allowing the API to remain fast and reliable under load. The API publishes jobs to RabbitMQ. Workers consume these jobs and perform AI-based course generation asynchronously. 
 
