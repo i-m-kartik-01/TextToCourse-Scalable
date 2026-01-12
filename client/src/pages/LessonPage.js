@@ -181,6 +181,28 @@ export default function LessonPage() {
         {Array.isArray(lesson.content) &&
           lesson.content.map(renderBlock)}
 
+        {/* VIDEO BUTTON (ALWAYS) */}
+        <button
+          onClick={() => navigate(`/lessons/${lesson._id}/video`)}
+          className="mt-10 inline-flex items-center gap-2
+                     bg-blue-800 hover:bg-gray-800
+                     text-white px-6 py-3 rounded-lg font-semibold shadow"
+        >
+          ▶ Watch Video Lesson
+        </button>
+
+        {/* AUDIO */}
+        <div className="mt-10">
+          <h3 className="font-semibold mb-2 text-slate-900 dark:text-white">
+            Audio Explanation
+          </h3>
+          <audio
+            controls
+            className="w-full"
+            src={`${process.env.REACT_APP_API_BASE_URL}/api/lessons/${lesson._id}/audio`}
+          />
+        </div>
+        {/* QUIZ */}
         {Array.isArray(lesson.quiz) && lesson.quiz.length > 0 && (
           <div className="mt-16 bg-white dark:bg-slate-900 border dark:border-slate-700 rounded-xl p-8">
             <h2 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white">
